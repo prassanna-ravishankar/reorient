@@ -1,0 +1,28 @@
+[project]
+name = "reorient"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Prassanna Ravishankar" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "google-api-python-client>=2.190.0",
+    "google-auth-httplib2>=0.3.0",
+    "google-auth-oauthlib>=1.2.4",
+    "httpx>=0.28.1",
+    "python-dotenv>=1.2.1",
+    "pyyaml>=6.0.3",
+    "slack-sdk>=3.40.1",
+]
+
+[project.scripts]
+reorient = "reorient:main"
+
+[build-system]
+requires = ["uv_build>=0.8.22,<0.9.0"]
+build-backend = "uv_build"
+
+[tool.ty.environment]
+python = ".venv/bin/python"
