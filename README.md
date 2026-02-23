@@ -1,6 +1,6 @@
 <p align="center"><img src="./assets/reorient.png" width="400"/></p>
 
-<p align="center">Beat "weekend amnesia" — pull live context from Linear, GitHub, Google Drive, and Slack into a single briefing, right inside Claude Code.</p>
+<p align="center">Beat "weekend amnesia" — pull live context from Linear, GitHub, Google Drive, Slack, and Granola meeting notes into a single briefing, right inside Claude Code.</p>
 
 ---
 
@@ -33,6 +33,7 @@ Each skill fetches live data, blends it with memory from past sessions, and retu
 | **Linear** | `LINEAR_API_KEY` in `.env` — Linear → Settings → API → Personal keys |
 | **Google Drive** | [Create OAuth 2.0 Desktop credentials](https://console.cloud.google.com) → save as `~/.reorient/google_credentials.json` → run `uv run python -c "from reorient.drive import auth; auth()"` once |
 | **Slack** | Login once via `agent-browser --profile ~/.reorient/browser-profile open "$SLACK_WORKSPACE_URL" --headed`, then set `SLACK_WORKSPACE_URL` in `.env` |
+| **Granola** | `claude mcp add --transport http --scope project granola https://mcp.granola.ai/mcp` — authenticate via browser when prompted |
 
 Set `GITHUB_ORG` in `.env` to your organisation name.
 

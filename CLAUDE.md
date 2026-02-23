@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Purpose
 
-`reorient` eliminates "weekend amnesia" by surfacing context from Linear, GitHub, Google Drive, and Slack so you can re-orient quickly after any break.
+`reorient` eliminates "weekend amnesia" by surfacing context from Linear, GitHub, Google Drive, Slack, and Granola meeting notes so you can re-orient quickly after any break.
 
 ## Daily Use
 
@@ -31,6 +31,7 @@ Session memory is handled automatically by the memsearch plugin — no manual ac
 | Linear | done | `LINEAR_API_KEY` in `.env` |
 | GitHub | done | via `gh` CLI auth |
 | Slack | done | via browser automation; profile at `~/.reorient/browser-profile` |
+| Granola | done | via Granola MCP (project-scoped in `.mcp.json`) |
 
 ---
 
@@ -41,7 +42,7 @@ For adding connectors or extending functionality.
 ### Architecture
 
 ```
-Data Sources (Linear · GitHub · Drive · Slack)
+Data Sources (Linear · GitHub · Drive · Slack · Granola)
         ↓
 src/reorient/
   drive.py · linear.py · github.py  ← per-source Python clients
