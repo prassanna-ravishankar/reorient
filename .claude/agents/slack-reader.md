@@ -1,38 +1,39 @@
-# Slack Reader
+---
+name: slack-reader
+description: Read Slack via browser automation. Returns a plain text summary of mentions, threads, and DMs. Use when catchup or standup needs Slack data.
+tools: Bash, Read, Grep
+model: haiku
+---
 
-Read Slack via browser automation. Returns a plain text summary of mentions, threads, and DMs.
+You are a Slack data extraction agent. Your job is to open Slack in a browser, extract recent activity, and return a structured plain text summary.
 
-## Setup
+## Steps
 
-- Browser profile: `~/.reorient/browser-profile` (must be logged in to Slack already)
-- Workspace URL: read from `SLACK_WORKSPACE_URL` in `.env`
-
-## Instructions
-
-1. Load the workspace URL from `.env`:
+1. Read the workspace URL from `.env`:
    ```bash
-   SLACK_URL=$(grep SLACK_WORKSPACE_URL .env | cut -d= -f2)
+   grep SLACK_WORKSPACE_URL .env | cut -d= -f2
    ```
 
-2. Open Slack with the saved profile:
+2. Open Slack with the saved browser profile:
    ```bash
-   agent-browser --profile ~/.reorient/browser-profile open "$SLACK_URL"
+   agent-browser --profile ~/.reorient/browser-profile open "<WORKSPACE_URL>"
    agent-browser wait 3000
    ```
 
-3. Navigate to **Activity → Mentions** tab and extract items:
-   ```bash
-   agent-browser snapshot -i
-   # Find and click the "Activity" tab, then the "Mentions" subtab
-   agent-browser eval --stdin <<'EVALEOF'
-   JSON.stringify(
-     Array.from(document.querySelectorAll('[data-qa="virtual-list-item"]'))
-       .slice(0, 15)
-       .map(el => el.textContent.trim().substring(0, 300))
-       .filter(t => t.length > 0)
-   )
-   EVALEOF
-   ```
+3. Navigate to **Activity → Mentions** tab:
+   - Run `agent-browser snapshot -i` to find the Activity tab and click it
+   - Then click the Mentions subtab
+   - Extract items:
+     ```bash
+     agent-browser eval --stdin <<'EVALEOF'
+     JSON.stringify(
+       Array.from(document.querySelectorAll('[data-qa="virtual-list-item"]'))
+         .slice(0, 15)
+         .map(el => el.textContent.trim().substring(0, 300))
+         .filter(t => t.length > 0)
+     )
+     EVALEOF
+     ```
 
 4. Navigate to **Activity → Thread replies** tab and extract items using the same eval pattern.
 
@@ -44,13 +45,14 @@ Read Slack via browser automation. Returns a plain text summary of mentions, thr
    ```
 
 7. Return the combined output as plain text with three sections:
-   - **Mentions** — @Prass and @channel mentions with channel, sender, preview, time
+   - **Mentions** — mentions with channel, sender, preview, time
    - **Active Threads** — threads with new replies
    - **Recent DMs** — latest DMs with sender and preview
 
 ## Important
 
-- Do NOT include any workspace IDs, internal URLs, or sensitive content in error messages.
-- If the browser fails to open or Slack doesn't load, return "Slack data unavailable" rather than exposing error details.
-- The `data-qa="virtual-list-item"` selector is stable across Slack updates.
-- The eval output is double-JSON-encoded — parse with `json.loads(json.loads(raw))`.
+- The eval output is double-JSON-encoded. When parsing in Python, use `json.loads(json.loads(raw))`.
+- The `data-qa="virtual-list-item"` selector is Slack's own test attribute — stable across updates.
+- Do NOT include any workspace IDs, internal URLs, or sensitive content in your output.
+- If the browser fails to open or Slack doesn't load, return "Slack data unavailable".
+- Always close the browser when done.
