@@ -30,7 +30,7 @@ Session memory is handled automatically by the memsearch plugin — no manual ac
 | Google Drive | done | token at `~/.reorient/google_token.json` |
 | Linear | done | `LINEAR_API_KEY` in `.env` |
 | GitHub | done | via `gh` CLI auth |
-| Slack | pending | workspace approval pending; `SLACK_USER_TOKEN` in `.env` |
+| Slack | done | via browser automation; profile at `~/.reorient/browser-profile` |
 
 ---
 
@@ -44,12 +44,27 @@ For adding connectors or extending functionality.
 Data Sources (Linear · GitHub · Drive · Slack)
         ↓
 src/reorient/
-  slack.py · drive.py · linear.py · github.py  ← per-source clients
+  drive.py · linear.py · github.py  ← per-source Python clients
   meta.py  ← aggregation, outputs markdown
+        ↓
+.claude/agents/slack-reader.md  ← browser-based Slack reader (subagent)
         ↓
 scripts/catchup.py · standup.py  ← thin CLI wrappers
         ↓
-.claude/skills/catchup · standup  ← skills call scripts + memory-recall
+.claude/skills/catchup · standup  ← skills call scripts + slack-reader + memory-recall
+```
+
+### Slack via Browser Automation
+
+Slack uses `agent-browser` with a saved browser profile instead of the Slack API (workspace app approval was slow). The `slack-reader` subagent:
+1. Opens Slack headless with the profile at `~/.reorient/browser-profile`
+2. Navigates Activity → Mentions, Activity → Thread replies, DMs
+3. Extracts text via `data-qa="virtual-list-item"` DOM selector
+4. Returns a plain text summary
+
+To re-login if the session expires:
+```bash
+agent-browser --profile ~/.reorient/browser-profile open "$SLACK_WORKSPACE_URL" --headed
 ```
 
 ### Adding a New Connector

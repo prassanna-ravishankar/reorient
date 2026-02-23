@@ -32,7 +32,7 @@ Each skill fetches live data, blends it with memory from past sessions, and retu
 | **GitHub** | `gh auth login` |
 | **Linear** | `LINEAR_API_KEY` in `.env` — Linear → Settings → API → Personal keys |
 | **Google Drive** | [Create OAuth 2.0 Desktop credentials](https://console.cloud.google.com) → save as `~/.reorient/google_credentials.json` → run `uv run python -c "from reorient.drive import auth; auth()"` once |
-| **Slack** | `SLACK_USER_TOKEN` in `.env` — requires a custom Slack app with user scopes (`channels:history`, `im:history`, `search:read`, etc.) |
+| **Slack** | Login once via `agent-browser --profile ~/.reorient/browser-profile open "$SLACK_WORKSPACE_URL" --headed`, then set `SLACK_WORKSPACE_URL` in `.env` |
 
 Set `GITHUB_ORG` in `.env` to your organisation name.
 
