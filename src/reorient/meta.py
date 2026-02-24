@@ -4,7 +4,7 @@ Cross-source aggregation. Outputs markdown Claude can reason over directly.
 
 from datetime import datetime, timezone
 
-from reorient import drive, github, linear, slack
+from reorient import drive, github, linear, slack, watchlist
 
 
 def _now() -> str:
@@ -75,6 +75,22 @@ def catchup() -> str:
         for f in edited:
             ts = (f.get("modifiedByMeTime") or "")[:10]
             sections.append(f"- {f['name']} ({ts}) — {f.get('webViewLink','')}")
+
+    # Watchlist
+    try:
+        watched = watchlist.check()
+        has_items = any(watched.values())
+        if has_items:
+            sections.append("\n## Watchlist\n")
+            for doc in watched.get("drive", []):
+                ts = (doc.get("viewedByMeTime") or doc.get("modifiedByMeTime") or "")[:10]
+                sections.append(f"- {doc['name']} ({ts}) — {doc.get('webViewLink','')}")
+            for pr in watched.get("github_prs", []):
+                sections.append(f"- PR #{pr['number']} {pr['title']} [{pr['state']}] — {pr.get('url','')}")
+            for issue in watched.get("linear", []):
+                sections.append(f"- [{issue['identifier']}]")
+    except Exception:
+        pass  # watchlist unavailable, skip
 
     return "\n".join(sections)
 
