@@ -7,18 +7,17 @@ description: Generate a daily standup summary from live work data and session me
 
 ## Workflow
 
-1. Run the standup aggregator from the project root:
+1. Run the standup aggregator (Linear, GitHub, Slack) from the project root:
    ```bash
    uv run python scripts/standup.py
    ```
+   This includes Slack data via the SDK. If Slack data is missing from the output, fall back to the `slack-reader` browser agent.
 
-2. Get recent Slack activity. If unavailable, skip.
+2. Query Granola MCP for yesterday's meeting notes and decisions. If unavailable, skip.
 
-3. Query Granola MCP for yesterday's meeting notes and decisions. If unavailable, skip.
+3. Search session memory for recent context (completed tasks, open threads, decisions made).
 
-4. Search session memory for recent context (completed tasks, open threads, decisions made).
-
-5. Produce a short standup in three bullets:
+4. Produce a short standup in three bullets:
    - **Yesterday** — what was completed or meaningfully progressed
    - **Today** — what's actively in flight or next up
    - **Blockers** — anything waiting on someone else, stuck, or needs a decision
