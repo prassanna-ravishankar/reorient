@@ -4,7 +4,7 @@ Cross-source aggregation. Outputs markdown Claude can reason over directly.
 
 from datetime import datetime, timezone
 
-from reorient import drive, github, linear
+from reorient import drive, github, linear, slack
 
 
 def _now() -> str:
@@ -43,6 +43,23 @@ def catchup() -> str:
         for pr in reviews:
             repo = pr["repository"]["name"]
             sections.append(f"- #{pr['number']} {pr['title']} — {repo} — {pr['url']}")
+
+    # Slack
+    try:
+        mentions = slack.recent_mentions(10)
+        dms = slack.unread_dms(5)
+        if mentions or dms:
+            sections.append("\n## Slack\n")
+            if mentions:
+                sections.append("### Recent Mentions")
+                for m in mentions:
+                    sections.append(f"- [{m['channel']}] {m['sender']}: {m['text'][:120]}")
+            if dms:
+                sections.append("\n### Unread DMs")
+                for d in dms:
+                    sections.append(f"- {d['from']} ({d['unread_count']} unread): {d['latest_text'][:120]}")
+    except Exception:
+        pass  # slack unavailable, skip
 
     # Drive
     sections.append("\n## Google Drive\n")

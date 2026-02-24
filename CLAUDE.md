@@ -30,7 +30,7 @@ Session memory is handled automatically by the memsearch plugin — no manual ac
 | Google Drive | done | token at `~/.reorient/google_token.json` |
 | Linear | done | `LINEAR_API_KEY` in `.env` |
 | GitHub | done | via `gh` CLI auth |
-| Slack | done | via browser automation; profile at `~/.reorient/browser-profile` |
+| Slack | done | `SLACK_USER_TOKEN` in `.env`; browser profile at `~/.reorient/browser-profile` as fallback |
 | Granola | done | via Granola MCP (project-scoped in `.mcp.json`) |
 
 ---
